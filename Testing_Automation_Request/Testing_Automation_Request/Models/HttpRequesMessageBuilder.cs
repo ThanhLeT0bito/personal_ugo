@@ -21,7 +21,8 @@ namespace Testing_Automation_Request.Models
         FormUrlEncodedContent,
         ByteArrayContent,
         MultipartForm,
-        StreamContent
+        StreamContent,
+        JsonObject
     }
 
     [AttributeUsage(AttributeTargets.Property)]

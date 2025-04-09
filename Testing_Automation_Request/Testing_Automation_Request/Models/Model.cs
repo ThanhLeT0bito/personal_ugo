@@ -1,15 +1,12 @@
-﻿using CloudBanking.Entities;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Schema;
 using System.Xml;
 using System.Xml.Serialization;
-using CloudBanking.HttpPosInterfaceClient;
-using CloudBanking.ApiLocators.Models;
 
-namespace CloudBanking.HttpPosInterfaceClient
+namespace Testing_Automation_Request.Models
 {
     [XmlRoot(ElementName = "Request", Namespace = "")]
     public class TransactionRequestModel : BaseObject   
@@ -137,6 +134,9 @@ namespace CloudBanking.HttpPosInterfaceClient
         public BasketModel Basket { get; set; }
 
         public bool FromSameDevice { get; set; }
+
+        public string AsyncMode { get; set; }
+
 
         public TransactionRequestModel()
         {

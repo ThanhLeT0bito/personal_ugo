@@ -1,11 +1,10 @@
-﻿using CloudBanking.ApiLocators;
-using CloudBanking.ApiLocators.Models;
-using CloudBanking.ApiLocators.Services;
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Testing_Automation_Request.Models;
+using Testing_Automation_Request.ServiceLocators;
 
-namespace CloudBanking.HttpPosInterfaceClient
+namespace Testing_Automation_Request.Services
 {
     public class HttpPosInterfaceClient : WebApiClient, IPosInterfaceClient
     {

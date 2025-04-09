@@ -1,14 +1,11 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using CloudBanking.Utilities.CustomFormat;
+using Newtonsoft.Json;
 using System.Net;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Testing_Automation_Request.Models;
 using Testing_Automation_Request.ServiceLocators;
+using static CloudBanking.Utilities.UtilEnum;
 
 namespace Testing_Automation_Request.Services
 {

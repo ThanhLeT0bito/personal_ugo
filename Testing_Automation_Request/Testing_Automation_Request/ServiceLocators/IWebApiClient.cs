@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Testing_Automation_Request.ServiceLocators
 {
-    internal class IWebApiClient
+    public class IWebApiClient
     {
     }
 }

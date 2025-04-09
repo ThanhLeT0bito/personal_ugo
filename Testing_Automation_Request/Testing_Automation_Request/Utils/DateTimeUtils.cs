@@ -32,10 +32,10 @@ namespace CloudBanking.Utilities
 
         public static DateTime UnixEpoch { get { return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc); } }
 
-        public static string FormatHour(this int iHour)
-        {
-            return DateTime.Today.Add(TimeSpan.FromHours(iHour)).ToString(GlobalConstants.FORMAT_TIME_HH_TT);
-        }
+        //public static string FormatHour(this int iHour)
+        //{
+        //    return DateTime.Today.Add(TimeSpan.FromHours(iHour)).ToString(GlobalConstants.FORMAT_TIME_HH_TT);
+        //}
 
         public static string FormatHourSecond(this long lHour, bool fHtml = false)
         {

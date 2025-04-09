@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace Testing_Automation_Request.Models
 {
-    internal class ServiceInvokeException
+    public class ServiceInvokeException : Exception
     {
+        public HttpResponseMessage ResponseMessage { get; }
+        public ErrorResponseMessage ErrorResponseDetails { get; set; }
+
+        public ServiceInvokeException(HttpResponseMessage responseMessage, ErrorResponseMessage errorResponse)
+        {
+            ResponseMessage = responseMessage;
+            ErrorResponseDetails = errorResponse;
+        }
     }
 }

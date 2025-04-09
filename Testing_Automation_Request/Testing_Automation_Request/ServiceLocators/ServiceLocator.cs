@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace CloudBanking.ServiceLocators
+﻿namespace Testing_Automation_Request.ServiceLocators
 {
     public sealed class ServiceLocator
     {

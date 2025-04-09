@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CloudBanking.Entities
+namespace Testing_Automation_Request.Models
 {
     [System.Serializable]
     public abstract class BaseObject: IDisposable
