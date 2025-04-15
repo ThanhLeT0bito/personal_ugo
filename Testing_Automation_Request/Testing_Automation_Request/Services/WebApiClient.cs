@@ -13,6 +13,8 @@ namespace Testing_Automation_Request.Services
     {
         private const string EP_SERVERTIME = "/api/ServerUtilities/ServerTime";
 
+        protected virtual string CAFileName => "";
+
         public static string ProxyHost { get; set; }
         public static string ProxyPort { get; set; }
         public static string ProxyUser { get; set; }
@@ -20,6 +22,8 @@ namespace Testing_Automation_Request.Services
 
         public Uri BaseUrl { get; private set; }
         public string UserAgent { get; private set; }
+
+        public bool UseNumericBoolean { get; set; } = true;
 
         protected string _mediaType = HttpRequesMessageBuilder.JSON;
 
@@ -45,6 +49,11 @@ namespace Testing_Automation_Request.Services
         {
             BaseUrl = uri;
             UserAgent = userAgent;
+        }
+
+        public virtual void SetBaseUrl(Uri baseurl)
+        {
+            BaseUrl = baseurl;
         }
 
         public WebApiClient() { }
@@ -138,15 +147,13 @@ namespace Testing_Automation_Request.Services
                 {
                     case HttpRequesMessageBuilder.JSON:
 
-                        data = JsonConvert.DeserializeObject<T>(content);
+                        data = CustomJSONSerializer.Deserialize<T>(content, UseNumericBoolean);
 
                         break;
 
                     case HttpRequesMessageBuilder.XML:
 
-                        content = Regex.Replace(content, @"[^\u0009\u000A\u000D\u0020-\u007E]", "");
-
-                        data = CustomXMLSerializer.Deserialize<T>(content);
+                        data = CustomXMLSerializer.Deserialize<T>(content, UseNumericBoolean);
 
                         break;
 
@@ -226,12 +233,7 @@ namespace Testing_Automation_Request.Services
 
             StatusResponse<T> value = new StatusResponse<T>();
 
-            //todo Lam add to pass ssl exception
-            HttpClientHandler clientHandler = new HttpClientHandler();
-            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
-            {
-                return true;
-            };
+            HttpClientHandler clientHandler = GetHttpClientHandler();
 
             _cts = new CancellationTokenSource();
             //cts.CancelAfter(10000);
@@ -275,7 +277,7 @@ namespace Testing_Automation_Request.Services
             }
             catch (TaskCanceledException ex)
             {
-                if (_cts.Token.IsCancellationRequested)
+                if (_cts != null && _cts.Token != null && _cts.Token.IsCancellationRequested)
                 {
                     throw new POSErrorResponseExeption(new ErrorResponseModel()
                     {
@@ -294,7 +296,7 @@ namespace Testing_Automation_Request.Services
             }
             catch (POSErrorResponseExeption sie)
             {
-                throw sie;
+                //throw sie;
             }
             catch (AggregateException ae)
             {
@@ -313,7 +315,48 @@ namespace Testing_Automation_Request.Services
             return value;
         }
 
-        protected async Task<T> SendRequest<T>(HttpRequestMessage request)
+        public HttpClientHandler GetHttpClientHandler()
+        {
+            HttpClientHandler clientHandler = new HttpClientHandler();
+
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, certChain, sslPolicyErrors) =>
+            {
+                return true;
+
+                // To do: Disable SSL for this version
+                //if (string.IsNullOrEmpty(CAFileName))
+                //    return true;
+
+                //if (sslPolicyErrors == SslPolicyErrors.None)
+                //    return true;
+
+                //if (certChain.ChainStatus.Length == 0)
+                //    return false;
+
+                //var caCert = _utilityService.GetPOSCACert(CAFileName);
+                //if (caCert == null)
+                //    return false;
+
+                //var validatingChain = new X509Chain();
+
+                //validatingChain.ChainPolicy.ExtraStore.Add(caCert);
+                //validatingChain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+                //validatingChain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+
+                //bool isValidChain = validatingChain.Build(cert);
+                //if (!isValidChain)
+                //    return false;
+
+                //var chainRoot = certChain.ChainElements[certChain.ChainElements.Count - 1].Certificate;
+                //isValidChain = isValidChain && chainRoot.RawData.SequenceEqual(caCert.RawData);
+
+                //return isValidChain;
+            };
+
+            return clientHandler;
+        }
+
+        protected async Task<T> SendRequest<T>(HttpRequestMessage request, double timeout = 300)
         {
             HttpResponseMessage response = null;
             ErrorResponseMessage error = null;
@@ -321,15 +364,14 @@ namespace Testing_Automation_Request.Services
 
             T value = default(T);
 
-            //var client = GetHttpClient();
+            HttpClientHandler clientHandler = GetHttpClientHandler();
 
-            //todo Lam add to pass ssl exception
-            HttpClientHandler clientHandler = new HttpClientHandler();
-            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
-            {
-                return true;
-            };
             var client = new HttpClient(clientHandler);
+
+            client.Timeout = TimeSpan.FromSeconds(timeout);
+
+            if (request != null && request.Content != null && request.Content.Headers != null && request.Content.Headers.Contains("Content-Type"))
+                request.Content.Headers.Remove("Content-Type");
 
             if (!string.IsNullOrEmpty(UserAgent))
             {
@@ -379,6 +421,5 @@ namespace Testing_Automation_Request.Services
 
             return value;
         }
-
     }
 }

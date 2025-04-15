@@ -21,9 +21,14 @@ namespace Testing_Automation_Request.Services
         const string URL_CARD_STATUS_CHECK = "/v1/sessions/{0}/querycard";
         const string URL_PRINT_STORED_TRANSACTIONS = "/v1/sessions/{0}/printStoredTransactions";
         const string URL_PRINT_PENDING_TRANSACTIONS = "/v1/sessions/{0}/printpendingtransaction";
+        const string URL_QUERY_TRANSACTION = "/v1/sessions/{0}/querytransaction";
+        const string URL_REMOTE_KEY_INJECTION = "/v1/sessions/{0}/remotekeyinjection";
+        const string URL_BRING_APP_TO_FOREGROUND = "/v1/sessions/{0}/bringapptoforeground";
+        const string URL_OFFLINE_TRANMISSION = "/v1/sessions/{0}/transmitofflinetrans";
 
         string _token = string.Empty;
 
+        protected override string CAFileName => "ca.pem";
 
         public HttpPosInterfaceClient()
         {
@@ -50,168 +55,27 @@ namespace Testing_Automation_Request.Services
             _token = token;
         }
 
-        public async Task<StatusResponse<POSResponse>> TransactionStatus(string sessionId)
-        {
-            var request = new HttpRequesMessageBuilder()
-               .SetBaseUrl(BaseUrl.ToString())
-               .SetApiEndpoint(string.Format(URL_END_POINT_TRANSACTION_STATUS, sessionId))
-               .SetMethod(HttpMethod.Get)
-               .Build();
-
-            return await Request<POSResponse>(request);
-        }
-
-        public async Task<StatusResponse<LogonResponseModel>> Logon(object requestModel, string sessionId)
-        {
-            var request = new HttpRequesMessageBuilder()
-               .SetBaseUrl(BaseUrl.ToString())
-               .SetHttpContent(requestModel, HttpContentType.StringContent, _mediaType)
-               .SetApiEndpoint(string.Format(URL_END_POINT_LOGON, sessionId))
-               .SetMethod(HttpMethod.Post)
-               .Build();
-
-            return await Request<LogonResponseModel>(request);
-        }
-
-        public async Task<StatusResponse<SettlementResponseModel>> Settlement(object requestModel, string sessionId)
-        {
-            var request = new HttpRequesMessageBuilder()
-               .SetBaseUrl(BaseUrl.ToString())
-               .SetHttpContent(requestModel, HttpContentType.StringContent, _mediaType)
-               .SetApiEndpoint(string.Format(URL_END_POINT_SETTLEMENT, sessionId))
-               .SetMethod(HttpMethod.Post)
-               .Build();
-
-            return await Request<SettlementResponseModel>(request);
-        }
-
-        public async Task<StatusResponse<SettlementResponseModel>> SettlementEnquiry(object requestModel, string sessionId)
-        {
-            var request = new HttpRequesMessageBuilder()
-              .SetBaseUrl(BaseUrl.ToString())
-              .SetHttpContent(requestModel, HttpContentType.StringContent, _mediaType)
-              .SetApiEndpoint(string.Format(URL_END_POINT_SETTLEMENT, sessionId))
-              .SetMethod(HttpMethod.Post)
-              .Build();
-
-            return await Request<SettlementResponseModel>(request);
-        }
-
-        public async Task<StatusResponse<StartVNCLikeResponseModel>> StartVNCLikeServer(string sessionId)
-        {
-            var request = new HttpRequesMessageBuilder()
-                .SetBaseUrl(BaseUrl.ToString())
-                .SetApiEndpoint(string.Format(URL_END_POINT_START_VNC_LIKE, sessionId))
-                .SetMethod(HttpMethod.Post)
-                .Build();
-
-            return await Request<StartVNCLikeResponseModel>(request);
-        }
-
-        public async Task<StatusResponse<POSResponse>> Transaction(object model, string sessionId)
+        public async Task<StatusResponse<TransactionResponseModel>> Transaction(object model, string sessionId)
         {
             var request = new HttpRequesMessageBuilder()
                 .SetBaseUrl(BaseUrl.ToString())
                 .SetApiEndpoint(string.Format(URL_END_POINT_TRANSACTION, sessionId))
                 .SetMethod(HttpMethod.Post)
-                .SetHttpContent(model, HttpContentType.StringContent, _mediaType)
+                .SetHttpContent(model, HttpContentType.StringContent, _mediaType, UseNumericBoolean)
                 .Build();
 
-            return await Request<POSResponse>(request);
+            return await Request<TransactionResponseModel>(request);
         }
 
-        public async Task<StatusResponse<POSResponse>> TransactionSearch(object model, string sessionId)
+        public async Task<StatusResponse<TransactionResponseModel>> QueryTransaction(string sessionId)
         {
             var request = new HttpRequesMessageBuilder()
                 .SetBaseUrl(BaseUrl.ToString())
-                .SetApiEndpoint(string.Format(URL_TRANSACTION_SEARCH, sessionId))
-                .SetMethod(HttpMethod.Post)
-                .SetHttpContent(model, HttpContentType.StringContent, _mediaType)
+                .SetApiEndpoint(string.Format(URL_QUERY_TRANSACTION, sessionId))
+                .SetMethod(HttpMethod.Get)
                 .Build();
 
-            return await Request<POSResponse>(request);
-        }
-
-        public async Task<StatusResponse<RePrintResponseModel>> RePrintReceipt(RePrintRequestModel model, string sessionId)
-        {
-            var request = new HttpRequesMessageBuilder()
-                .SetBaseUrl(BaseUrl.ToString())
-                .SetApiEndpoint(string.Format(URL_REPRINT, sessionId))
-                .SetMethod(HttpMethod.Post)
-                .SetHttpContent(model, HttpContentType.StringContent, _mediaType)
-                .Build();
-
-            return await Request<RePrintResponseModel>(request);
-        }
-
-        public async Task<StatusResponse<RePrintResponseModel>> RePrint(object requestModel, string sessionId)
-        {
-            var request = new HttpRequesMessageBuilder()
-                .SetBaseUrl(BaseUrl.ToString())
-                .SetApiEndpoint(string.Format(URL_REPRINT, sessionId))
-                .SetMethod(HttpMethod.Post)
-                .SetHttpContent(requestModel, HttpContentType.StringContent, _mediaType)
-                .Build();
-
-            return await Request<RePrintResponseModel>(request);
-        }
-
-        public async Task<StatusResponse<MerchantsResponseModels>> GetMerchantList(string sessionId)
-        {
-            var request = new HttpRequesMessageBuilder()
-               .SetBaseUrl(BaseUrl.ToString())
-               .SetApiEndpoint(string.Format(URL_GET_MERCHANT_LIST,sessionId))
-               .SetMethod(HttpMethod.Post)
-               .SetHttpContent(string.Empty, HttpContentType.StringContent, _mediaType)
-               .Build();
-
-            return await Request<MerchantsResponseModels>(request, HttpRequesMessageBuilder.JSON);
-        }
-
-        public async Task<StatusResponse<POSResponse>> CancelTransaction(string sessionId)
-        {
-            var request = new HttpRequesMessageBuilder()
-               .SetBaseUrl(BaseUrl.ToString())
-               .SetApiEndpoint(string.Format(URL_CANCEL_TRANSACTION, sessionId))
-               .SetMethod(HttpMethod.Post)
-               .SetHttpContent(string.Empty, HttpContentType.StringContent, _mediaType)
-               .Build();
-
-            return await Request<POSResponse>(request, HttpRequesMessageBuilder.JSON);
-        }
-
-        public async Task<StatusResponse<POSResponse>> CardStatusCheck(object model, string sessionId)
-        {
-            var request = new HttpRequesMessageBuilder()
-                .SetBaseUrl(BaseUrl.ToString())
-                .SetApiEndpoint(string.Format(URL_CARD_STATUS_CHECK, sessionId))
-                .SetMethod(HttpMethod.Post)
-                .SetHttpContent(model, HttpContentType.StringContent, _mediaType)
-                .Build();
-
-            return await Request<POSResponse>(request);
-        }
-        public async Task<StatusResponse<PrintStoredResponseModel>> PrintStoredTransactions(object model, string sessionId)
-        {
-            var request = new HttpRequesMessageBuilder()
-                .SetBaseUrl(BaseUrl.ToString())
-                .SetApiEndpoint(string.Format(URL_PRINT_STORED_TRANSACTIONS, sessionId))
-                .SetMethod(HttpMethod.Post)
-                .SetHttpContent(model, HttpContentType.StringContent, _mediaType)
-                .Build();
-
-            return await Request<PrintStoredResponseModel>(request);
-        }
-        public async Task<StatusResponse<PrintPendingResponseModel>> PrintPendingTransactions(object model, string sessionId)
-        {
-            var request = new HttpRequesMessageBuilder()
-                .SetBaseUrl(BaseUrl.ToString())
-                .SetApiEndpoint(string.Format(URL_PRINT_PENDING_TRANSACTIONS, sessionId))
-                .SetMethod(HttpMethod.Post)
-                .SetHttpContent(model, HttpContentType.StringContent, _mediaType)
-                .Build();
-
-            return await Request<PrintPendingResponseModel>(request);
+            return await Request<TransactionResponseModel>(request);
         }
 
         public void CancelRequest()

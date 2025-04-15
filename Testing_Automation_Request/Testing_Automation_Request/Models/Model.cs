@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 namespace Testing_Automation_Request.Models
 {
     [XmlRoot(ElementName = "Request", Namespace = "")]
-    public class TransactionRequestModel : BaseObject   
+    public class TransactionRequestModel : BaseObject
     {
         public string Merchant { get; set; } = "00";
 
@@ -27,8 +27,7 @@ namespace Testing_Automation_Request.Models
 
         public string TxnType { get; set; } // "P"
 
-        [LongNumber]
-        public double AmtTip { get; set; }
+        public long AmtTip { get; set; }
 
         [JsonIgnore]
         [XmlIgnore]
@@ -72,15 +71,13 @@ namespace Testing_Automation_Request.Models
 
         public string EnableTip { get; set; }
 
-        [LongNumber]
-        public double AmtCash { get; set; } //cash amount
+        public long AmtCash { get; set; } //cash amount
 
-        [LongNumber]
-        public double Amount { get; set; }
+        public long Amount { get; set; }
 
-        [JsonIgnore]
-        [XmlIgnore]
-        public string AuthCode { get; set; }
+        public long SearchAmount { get; set; }
+
+        public string lszApprovalCode { get; set; }
 
         public string TxnRef { get; set; } //reference
 
@@ -105,8 +102,6 @@ namespace Testing_Automation_Request.Models
         public long ExAmount { get; set; }
 
         public string lszSTAN { get; set; }
-
-        public string lszApprovalCode { get; set; }
 
         [JsonIgnore]
         [XmlIgnore]
@@ -133,10 +128,9 @@ namespace Testing_Automation_Request.Models
         [XmlElement("Basket")]
         public BasketModel Basket { get; set; }
 
-        public bool FromSameDevice { get; set; }
+        public bool AsyncMode { get; set; }
 
-        public string AsyncMode { get; set; }
-
+        public bool WithReceiptImageData { get; set; }
 
         public TransactionRequestModel()
         {
@@ -208,117 +202,66 @@ namespace Testing_Automation_Request.Models
         public bool IsPrePrint { get; set; }
     }
 
-    [XmlRoot(ElementName = "Transaction")]
-    public class Transaction
+
+    public class TransactionResponse
     {
-        public string TxnType { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public string Merchant { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public string CardType { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public string CardName { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public string RRN { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public string DateSettlement { get; set; }
-
-        [LongNumber]
-        public double AmtCash { get; set; }
-        [JsonIgnore]
-        [XmlIgnore]
-        [LongNumber]
-        public double AmtPurchase { get; set; }
-        [LongNumber]
-        public double Amount { get; set; }
-        [LongNumber]
-        public double AmtTip { get; set; }
-        public string AuthCode { get; set; }
-        public string TxnRef { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public string Pan { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public string DateExpiry { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public string Track2 { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public string AccountType { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public bool BalanceReceived { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public int AvailableBalance { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public int ClearedFundsBalance { get; set; }
-        public string Success { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public string ResponseCode { get; set; }
-        public string ResponseText { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public string IsTrack1Available { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public string IsTrack2Available { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public string IsTrack3Available { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public string Date { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public string Catid { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public string Caid { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public int Stan { get; set; }
-
         public uint PID { get; set; }
-        public uint Modify { get; set; }
-
-        [JsonIgnore]
-        [XmlIgnore]
-        public IList<Receipt> Receipts { get; set; }
-
-        public Transaction()
-        {
-            Receipts = new List<Receipt>();
-        }
+        public string Merchant { get; set; }
+        public string TxnType { get; set; }
+        public bool Success { get; set; }
+        public string ResponseText { get; set; }
+        public int IdShift { get; set; }
+        public int IdShiftName { get; set; }
+        public long lAmount { get; set; }
+        public long lTipAmount { get; set; }
+        public long lCashOut { get; set; }
+        public long lCashOutFee { get; set; }
+        public long lSurChargeTax { get; set; }
+        public long lDiscount { get; set; }
+        public long lDiscountPercent { get; set; }
+        public int iReward { get; set; }
+        public long lAuthorizedTotal { get; set; }
+        public long lDonationAmount { get; set; }
+        public int iEntryMode { get; set; }
+        public int iAccountType { get; set; }
+        public int iCurrencyCode { get; set; }
+        public int fsModify { get; set; }
+        public int iPaymentType { get; set; }
+        public int iCustomerLanguage { get; set; }
+        public int fClosed { get; set; }
+        public int fBatchError { get; set; }
+        public int fVoided { get; set; }
+        public bool fRefunded { get; set; }
+        public bool fAuthorized { get; set; }
+        public bool fSignature { get; set; }
+        public bool fCardHolderStatesCVVnotOnCard { get; set; }
+        public bool fCardNotPresent { get; set; }
+        public bool fCardNotPresentMail { get; set; }
+        public bool fCardNotPresentPhone { get; set; }
+        public bool fCanAdjust { get; set; }
+        public bool fCanVoid { get; set; }
+        public bool fCanPreAuthComplete { get; set; }
+        public bool fCanVoidPreAuthComplete { get; set; }
+        public bool fCanGoOffline { get; set; }
+        public string lszCustomerReference { get; set; }
+        public string Date { get; set; }
+        public string Time { get; set; }
+        public string szAuthorizationResponseCode { get; set; }
+        public string szReferenceNumber { get; set; }
+        public string lszSTAN { get; set; }
+        public string lszEndCardNumber { get; set; }
+        public int iReversalReason { get; set; }
+        public string lszCardLogo { get; set; }
+        public string szQRCode { get; set; }
+        public int byPinType { get; set; }
+        public int byPinStatus { get; set; }
+        public int iNoCVVOption { get; set; }
+        public int byCDCVM { get; set; }
+        public string szMaskedCardNumber { get; set; }
+        public string lszApprovalCode { get; set; }
+        public string ReceiptData { get; set; }
+        public string ReceiptLogo { get; set; }
+        public string DigitalSig { get; set; }
     }
 
 
@@ -336,12 +279,25 @@ namespace Testing_Automation_Request.Models
     }
 
     [PosResponse]
-    [XmlRoot(ElementName = "PosResponse")]
-    public class Response : POSResponse<Transaction>
+    public class TransactionResponseModel : POSResponse<TransactionModel>
     {
-        public Response()
+        public TransactionResponseModel()
         {
-            Response = new Transaction();
+            Response = new TransactionModel();
+        }
+    }
+
+    public class TransactionModel
+    {
+        public int Status { get; set; }
+
+        public string StatusText { get; set; }
+
+        public TransactionResponse Transaction { get; set; }
+
+        public TransactionModel()
+        {
+            Transaction = new TransactionResponse();
         }
     }
 
@@ -355,7 +311,12 @@ namespace Testing_Automation_Request.Models
     }
     public class TransactionResponses
     {
-        public List<Transaction> Transactions { get; set; }
+        public List<TransactionResponse> Transactions { get; set; }
+
+        public TransactionResponses()
+        {
+            Transactions = new List<TransactionResponse>();
+        }
     }
 
     [XmlRoot(ElementName = "Request", Namespace = "")]
@@ -387,8 +348,6 @@ namespace Testing_Automation_Request.Models
         [XmlIgnore]
         public string CutReceipt { get; set; } = "0";
 
-        public bool FromSameDevice { get; set; }
-
         public LogonRequestModel()
         {
         }
@@ -408,7 +367,7 @@ namespace Testing_Automation_Request.Models
         [JsonIgnore]
         [XmlIgnore]
         public string PinPadVersion { get; set; }
-        public string Success { get; set; }
+        public bool Success { get; set; }
 
         [JsonIgnore]
         [XmlIgnore]
@@ -434,6 +393,34 @@ namespace Testing_Automation_Request.Models
         public LogonResponse()
         {
         }
+    }
+
+    [PosResponse]
+    public class CardResponseModel : POSResponse<CardTransaction>
+    {
+        public CardResponseModel()
+        {
+            Response = new CardTransaction();
+        }
+    }
+
+    public class CardTransaction
+    {
+        public bool Success { get; set; }
+
+        public string ResponseText { get; set; }
+
+        public string AccountType { get; set; }
+
+        public string CardName { get; set; }
+
+        public string Pan { get; set; }
+
+        public int CardType { get; set; }
+
+        public int EntryMode { get; set; }
+
+        public string AuthCode { get; set; }
     }
 
     [XmlRoot(ElementName = "Request", Namespace = "")]
@@ -494,8 +481,6 @@ namespace Testing_Automation_Request.Models
         [XmlIgnore]
         public string ResetTotals { get; set; } = "0";
         public string SettlementDate { get; set; }
-
-        public bool FromSameDevice { get; set; }
     }
 
 
@@ -510,7 +495,7 @@ namespace Testing_Automation_Request.Models
         [JsonIgnore]
         [XmlIgnore]
         public SettlementReport SettlementReport { get; set; }
-        public string Success { get; set; }
+        public bool Success { get; set; }
 
         [JsonIgnore]
         [XmlIgnore]
@@ -578,21 +563,19 @@ namespace Testing_Automation_Request.Models
         [JsonIgnore]
         [XmlIgnore]
         public string Type { get; set; }
-
-        public bool FromSameDevice { get; set; }
     }
 
     public class RePrintResponse
     {
         public string Merchant { get; set; }
-        public string Success { get; set; }
+        public bool Success { get; set; }
 
         [JsonIgnore]
         [XmlIgnore]
         public string ResponseCode { get; set; }
         public string ResponseText { get; set; }
-
-        public string DigitalSig { get; set; }
+        public string ReceiptData { get; set; }
+        public string ReceiptLogo { get; set; }
 
         public RePrintResponse()
         {
@@ -612,6 +595,7 @@ namespace Testing_Automation_Request.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        public int UnattendedMode { get; set; } = -1;
     }
 
     public class MerchantsResponse
@@ -633,8 +617,6 @@ namespace Testing_Automation_Request.Models
     public class PrintStoreRequestModel
     {
         public string Merchant { get; set; }
-
-        public bool FromSameDevice { get; set; }
 
         public PrintStoreRequestModel()
         {
@@ -669,7 +651,6 @@ namespace Testing_Automation_Request.Models
     {
         public string Merchant { get; set; }
 
-        public bool FromSameDevice { get; set; }
     }
 
     [XmlRoot(ElementName = "Response")]
@@ -695,14 +676,14 @@ namespace Testing_Automation_Request.Models
         public string Merchant { get; set; }
         public string FuncType { get; set; }
         public string TxnRef { get; set; }
-        public string AuthCode { get; set; }
-        [LongNumber]
-        public double Amount { get; set; }
+        public long Amount { get; set; }
+        public long SearchAmount { get; set; }
         public long ExAmount { get; set; }
         public string Stan { get; set; }
         public string Last4Digits { get; set; }
         public string Date { get; set; }
         public string Time { get; set; }
+        public string AuthId { get; set; }
     }
 
     public class SearchTransactionResponse
@@ -719,15 +700,8 @@ namespace Testing_Automation_Request.Models
         [XmlElement(ElementName = "Time")]
         public string Time { get; set; }
 
-        [XmlElement(ElementName = "lszApprovalCode")]
-        public string lszApprovalCode { get; set; }
-
-        [XmlElement(ElementName = "lszSTAN")]
-        public string lszSTAN { get; set; }
-
-        [XmlElement(ElementName = "lAmount")]
-        [LongNumber]
-        public double lAmount { get; set; }
+        [XmlElement(ElementName = "Amount")]
+        public long Amount { get; set; }
 
         [XmlElement(ElementName = "PID")]
         public uint PID { get; set; }
@@ -775,5 +749,92 @@ namespace Testing_Automation_Request.Models
         }
     }
 
+    public class GetTokenRequestModel
+    {
+        public string AppKey { get; set; }
 
+        public string AppSecret { get; set; }
+
+        public string TerminalSerialNumber { get; set; }
+    }
+
+    public class GetTokenResponseModel
+    {
+        public string Token { get; set; }
+
+    }
+
+    public class RemoteKeyInjectionRequestModel
+    {
+        public string Merchant { get; set; } = "00";
+
+        public string ResellerLogonId { get; set; }
+
+        public string ResellerLogonPasscode { get; set; }
+    }
+
+    public class RemoteKeyInjectionResponse
+    {
+        public string Merchant { get; set; }
+
+        public bool Success { get; set; }
+
+        public string ResponseText { get; set; }
+
+        public string ResponseCode { get; set; }
+    }
+
+    [PosResponse]
+    public class RemoteKeyInjectionResponseModel : POSResponse<RemoteKeyInjectionResponse>
+    {
+        public RemoteKeyInjectionResponseModel()
+        {
+            Response = new RemoteKeyInjectionResponse();
+        }
+    }
+
+    public class BringAppToForegroundResponse
+    {
+        public bool Success { get; set; }
+
+        public string ResponseText { get; set; }
+    }
+
+    [PosResponse]
+    public class BringAppToForegroundResponseModel : POSResponse<BringAppToForegroundResponse>
+    {
+        public BringAppToForegroundResponseModel()
+        {
+            Response = new BringAppToForegroundResponse();
+        }
+    }
+
+    public class TransmitOfflineRequestModel
+    {
+        public string Merchant { get; set; }
+    }
+
+    public class TransmitOfflineResponse
+    {
+        public bool Success { get; set; }
+
+        [JsonIgnore]
+        [XmlIgnore]
+        public string ResponseCode { get; set; }
+
+        public string ResponseText { get; set; }
+
+        public string TransmissionDate { get; set; }
+
+        public string TransmissionTime { get; set; }
+    }
+
+    [PosResponse]
+    public class TransmitOfflineResponseModel : POSResponse<TransmitOfflineResponse>
+    {
+        public TransmitOfflineResponseModel()
+        {
+            Response = new TransmitOfflineResponse();
+        }
+    }
 }

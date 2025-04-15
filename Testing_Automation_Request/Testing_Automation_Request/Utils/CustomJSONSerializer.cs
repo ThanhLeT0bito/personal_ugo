@@ -86,12 +86,12 @@ namespace CloudBanking.Utilities.CustomFormat
 
         public string SerializeToString(object o)
         {
-            JsonSerializerSettings settings     = new JsonSerializerSettings();
+            JsonSerializerSettings settings = new JsonSerializerSettings();
 
-            settings.TypeNameHandling           = TypeNameHandling.Objects;
-            settings.NullValueHandling          = NullValueHandling.Ignore;
+            settings.TypeNameHandling = TypeNameHandling.Objects;
+            settings.NullValueHandling = NullValueHandling.Ignore;
 
-            settings.ReferenceLoopHandling      = ReferenceLoopHandling.Serialize;
+            settings.ReferenceLoopHandling = ReferenceLoopHandling.Serialize;
 
             settings.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
 
@@ -105,14 +105,14 @@ namespace CloudBanking.Utilities.CustomFormat
         public void SerializeToStream(object o, Stream stream)
         {
 
-            var serializer                          = new JsonSerializer();
+            var serializer = new JsonSerializer();
 
-            serializer.TypeNameHandling             = TypeNameHandling.Objects ;
-            serializer.NullValueHandling            = NullValueHandling.Ignore;
+            serializer.TypeNameHandling = TypeNameHandling.Objects;
+            serializer.NullValueHandling = NullValueHandling.Ignore;
 
-            serializer.ReferenceLoopHandling        = ReferenceLoopHandling.Serialize;
+            serializer.ReferenceLoopHandling = ReferenceLoopHandling.Serialize;
 
-            serializer.PreserveReferencesHandling   = PreserveReferencesHandling.Objects;
+            serializer.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
 
             if (assemblies != null)
 
@@ -130,14 +130,14 @@ namespace CloudBanking.Utilities.CustomFormat
 
         public object DeserializeFromStream(Stream s, Type type)
         {
-            var serializer                          = new JsonSerializer();
+            var serializer = new JsonSerializer();
 
-            serializer.TypeNameHandling             = TypeNameHandling.Objects;
-            serializer.NullValueHandling            = NullValueHandling.Ignore;
+            serializer.TypeNameHandling = TypeNameHandling.Objects;
+            serializer.NullValueHandling = NullValueHandling.Ignore;
 
-            serializer.ReferenceLoopHandling        = ReferenceLoopHandling.Serialize;
+            serializer.ReferenceLoopHandling = ReferenceLoopHandling.Serialize;
 
-            serializer.PreserveReferencesHandling   = PreserveReferencesHandling.Objects;
+            serializer.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
 
             if (assemblies != null)
 
@@ -155,12 +155,12 @@ namespace CloudBanking.Utilities.CustomFormat
         public object DeserializeFromString(string s, Type type)
         {
 
-            JsonSerializerSettings settings     = new JsonSerializerSettings();
+            JsonSerializerSettings settings = new JsonSerializerSettings();
 
-            settings.TypeNameHandling           = TypeNameHandling.Objects;
-            settings.NullValueHandling          = NullValueHandling.Ignore;
+            settings.TypeNameHandling = TypeNameHandling.Objects;
+            settings.NullValueHandling = NullValueHandling.Ignore;
 
-            settings.ReferenceLoopHandling      = ReferenceLoopHandling.Serialize;
+            settings.ReferenceLoopHandling = ReferenceLoopHandling.Serialize;
 
             settings.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
 
@@ -173,6 +173,59 @@ namespace CloudBanking.Utilities.CustomFormat
                 return JsonConvert.DeserializeObject(s, settings);
 
             return null;
+        }
+
+        public static string Serialize(object model, bool useNumericBoolean = false)
+        {
+            var settings = new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented
+            };
+
+            if (useNumericBoolean)
+            {
+                settings.Converters.Add(new BooleanToNumericStringConverter());
+            }
+
+            return JsonConvert.SerializeObject(model, settings);
+        }
+
+        public static object Deserialize(string value, Type type, bool useNumericBoolean = false)
+        {
+            var settings = new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented
+            };
+
+            if (useNumericBoolean)
+            {
+                settings.Converters.Add(new BooleanToNumericStringConverter());
+            }
+
+            return JsonConvert.DeserializeObject(value, type, settings);
+        }
+
+        public static T Deserialize<T>(string text, bool useNumericBoolean = false)
+        {
+            return (T)Deserialize(text, typeof(T), useNumericBoolean);
+        }
+    }
+
+    public class BooleanToNumericStringConverter : JsonConverter
+    {
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(bool) || objectType == typeof(bool?);
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            return reader.Value?.ToString() == "1";
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            writer.WriteValue((bool)value ? "1" : "0");
         }
     }
 }

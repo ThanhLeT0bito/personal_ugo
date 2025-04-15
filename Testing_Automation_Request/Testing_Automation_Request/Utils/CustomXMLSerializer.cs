@@ -101,11 +101,12 @@ namespace CloudBanking.Utilities.CustomFormat
             return obj;
         }
 
-        public static string Serialize(object obj)
+        public static string Serialize(object obj, bool useNumericBoolean = false)
         {
             if (obj == null) return string.Empty;
 
             XmlSerializer xsSubmit = new XmlSerializer(obj.GetType());
+
             using (var sww = new StringWriter())
             {
                 var xns = new XmlSerializerNamespaces();
@@ -121,7 +122,36 @@ namespace CloudBanking.Utilities.CustomFormat
                     doc.RemoveChild(xmlDeclaration);
                 }
 
+                if (useNumericBoolean)
+                {
+                    ReplaceBooleanValues(doc);
+                }
+
                 return Beautify(doc);
+            }
+        }
+
+        private static void ReplaceBooleanValues(XmlDocument doc)
+        {
+            if (doc.DocumentElement == null) return;
+
+            Queue<XmlNode> queue = new Queue<XmlNode>();
+            queue.Enqueue(doc.DocumentElement);
+
+            while (queue.Count > 0)
+            {
+                XmlNode node = queue.Dequeue();
+
+                if (node.NodeType == XmlNodeType.Element && !string.IsNullOrEmpty(node.InnerText))
+                {
+                    if (node.InnerText == "true") node.InnerText = "1";
+                    else if (node.InnerText == "false") node.InnerText = "0";
+                }
+
+                foreach (XmlNode child in node.ChildNodes)
+                {
+                    queue.Enqueue(child);
+                }
             }
         }
 
@@ -139,25 +169,28 @@ namespace CloudBanking.Utilities.CustomFormat
             }
         }
 
-        public static T Deserialize<T>(string text)
+        public static T Deserialize<T>(string text, bool useNumericBoolean = false)
         {
-            return (T)Deserialize(text, typeof(T));
-        }   
-        
-        public static object Deserialize(string text,Type type)
-        {
-            if (string.IsNullOrEmpty(text))
-                return null;
+            return (T)Deserialize(text, typeof(T), useNumericBoolean);
+        }
 
-            var attr = type.GetCustomAttribute<XmlRootAttribute>();
-            if (attr == null)
+        public static object Deserialize(string text, Type type, bool useNumericBoolean = false)
+        {
+            if (string.IsNullOrEmpty(text)) return null;
+
+            if (useNumericBoolean)
             {
-                attr = new XmlRootAttribute()
+                foreach (PropertyInfo prop in type.GetProperties())
                 {
-                    Namespace = ""
-                };
+                    if (prop.PropertyType == typeof(bool) || prop.PropertyType == typeof(bool?))
+                    {
+                        text = text.Replace($"<{prop.Name}>true</{prop.Name}>", $"<{prop.Name}>1</{prop.Name}>");
+                        text = text.Replace($"<{prop.Name}>false</{prop.Name}>", $"<{prop.Name}>0</{prop.Name}>");
+                    }
+                }
             }
 
+            var attr = type.GetCustomAttribute<XmlRootAttribute>() ?? new XmlRootAttribute { Namespace = "" };
             XmlSerializer serializer = new XmlSerializer(type, attr);
 
             using (TextReader reader = new StringReader(text))

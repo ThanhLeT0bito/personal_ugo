@@ -52,7 +52,7 @@ namespace Testing_Automation_Request.Models
             return this;
         }
 
-        public HttpRequesMessageBuilder SetHttpContent(object content, HttpContentType httpContentType = HttpContentType.StringContent, string mediaType = JSON)
+        public HttpRequesMessageBuilder SetHttpContent(object content, HttpContentType httpContentType = HttpContentType.StringContent, string mediaType = JSON, bool useNumericBoolean = false)
         {
             switch (httpContentType)
             {
@@ -64,9 +64,9 @@ namespace Testing_Automation_Request.Models
                         stringContent = "data:" + WebUtility.UrlEncode(content.ToString());
                     else
                     {
-                        if(content!= null)
+                        if (content != null)
                         {
-                            if(content is string)
+                            if (content is string)
                             {
                                 stringContent = (string)content;
                             }
@@ -87,7 +87,7 @@ namespace Testing_Automation_Request.Models
 
                                 if (mediaType == JSON)
                                 {
-                                    stringContent = JsonConvert.SerializeObject(content);
+                                    stringContent = CustomJSONSerializer.Serialize(content, useNumericBoolean);
 
                                     if (longFieldNames.Any())
                                     {
@@ -108,7 +108,7 @@ namespace Testing_Automation_Request.Models
                                 }
                                 else
                                 {
-                                    stringContent = CustomXMLSerializer.Serialize(content);
+                                    stringContent = CustomXMLSerializer.Serialize(content, true);
 
                                     if (longFieldNames.Any())
                                     {
@@ -142,6 +142,11 @@ namespace Testing_Automation_Request.Models
                     break;
                 case HttpContentType.StreamContent:
                     Content = (StreamContent)content;
+                    break;
+
+                case HttpContentType.JsonObject:
+                    string jsonObject = JsonConvert.SerializeObject(content);
+                    Content = new StringContent(jsonObject, Encoding.UTF8, mediaType);
                     break;
             }
             return this;
